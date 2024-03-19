@@ -1,23 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"time"
 
-func (c config) getLocationNames() {
-	for i := range len(c.Results) {
-		fmt.Println(c.Results[i].Name)
-	}
-}
-
-type config struct {
-	Next     string `json:"next"`
-	Previous string `json:"previous"`
-	Results  []struct {
-		Name string `json:"name"`
-		URL  string `json:"url"`
-	} `json:"results"`
-}
+	"github.com/seasick-turtle/pokedexcli/internal/pokeapi"
+)
 
 func main() {
-	config := config{}
-	startRepl(&config)
+	pokeClient := pokeapi.NewClient(5 * time.Second)
+	cfg := &config{
+		pokeapiClient: pokeClient,
+	}
+
+	startRepl(cfg)
 }
