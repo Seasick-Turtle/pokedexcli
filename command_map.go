@@ -8,24 +8,26 @@ import (
 	"net/http"
 )
 
-type Location struct {
-	Count    int    `json:"count"`
-	Next     string `json:"next"`
-	Previous any    `json:"previous"`
-	Results  []struct {
-		Name string `json:"name"`
-		URL  string `json:"url"`
-	} `json:"results"`
+func (c config) saveConfigNext(nextUrl string) {
+	Next := c.getConfigNext()
+	*Next = nextUrl
 }
 
-func (l Location) getLocationNames() {
-	for i := range 20 {
-		fmt.Println(l.Results[i].Name)
+func (c config) getConfigNext() *string {
+	return &c.Next
+}
+
+func commandMap(config *config) error {
+	var apiUrl string
+
+	if config.Next == "" {
+		apiUrl = "https://pokeapi.co/api/v2/location-area/"
+	} else {
+		apiUrl = config.Next
 	}
-}
 
-func commandMap() error {
-	res, err := http.Get("https://pokeapi.co/api/v2/location-area/")
+	res, err := http.Get(apiUrl)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,13 +40,13 @@ func commandMap() error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	location := Location{}
-	err = json.Unmarshal(body, &location)
+
+	err = json.Unmarshal(body, &config)
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	location.getLocationNames()
+	config.saveConfigNext(config.Next)
+	config.getLocationNames()
 
 	return nil
 }
