@@ -3,10 +3,9 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/seasick-turtle/pokedexcli/internal/pokeapi"
 	"os"
 	"strings"
-
-	"github.com/seasick-turtle/pokedexcli/internal/pokeapi"
 )
 
 type config struct {
