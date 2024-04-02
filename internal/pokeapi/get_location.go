@@ -6,14 +6,14 @@ import (
 	"net/http"
 )
 
-func (c *Client) ListLocationPokemon(location string) (RespLocation, error) {
+func (c *Client) GetLocation(location string) (Location, error) {
 	url := baseURL + "/location-area/" + location
 
 	if cacheData, ok := c.cache.Get(url); ok {
-		locationResp := RespLocation{}
+		locationResp := Location{}
 		err := json.Unmarshal(cacheData, &locationResp)
 		if err != nil {
-			return RespLocation{}, err
+			return Location{}, err
 		}
 
 		return locationResp, nil
@@ -21,24 +21,24 @@ func (c *Client) ListLocationPokemon(location string) (RespLocation, error) {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return RespLocation{}, err
+		return Location{}, err
 	}
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return RespLocation{}, err
+		return Location{}, err
 	}
 	defer resp.Body.Close()
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return RespLocation{}, err
+		return Location{}, err
 	}
 
-	locationResp := RespLocation{}
+	locationResp := Location{}
 	err = json.Unmarshal(data, &locationResp)
 	if err != nil {
-		return RespLocation{}, err
+		return Location{}, err
 	}
 
 	c.cache.Add(url, data)
